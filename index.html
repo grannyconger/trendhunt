@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trend Score Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E3A4C; --soft:#4A6070; --bg:#F3F8F6; --line:#C9D3D9;
+  --teal:#1F7A70; --orange:#A8501E; --blue:#2F5DA8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Nunito Sans',Arial,sans-serif;font-size:17px;line-height:1.35}
+main{max-width:640px;margin:0 auto;padding:16px 18px 24px}
+h1{font-family:'Fredoka',Arial,sans-serif;font-weight:600;font-size:28px;line-height:1.1}
+.sub{color:var(--soft);font-size:15px;margin:2px 0 12px}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tabs button{flex:1;font:inherit;font-weight:700;background:none;border:none;border-bottom:3px solid var(--line);color:var(--soft);padding:8px 4px;cursor:pointer}
+
+.tabs .tt{display:block;font-weight:400;font-size:13px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+label.name{display:block;font-weight:700;margin-bottom:10px}
+label.name input{display:block;width:100%;font:inherit;padding:7px 9px;margin-top:4px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+section.q{padding:10px 0;border-top:1px solid var(--line)}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+.qhead h2{font-family:'Fredoka',Arial,sans-serif;font-weight:600;font-size:20px}
+.qhead .score{font-family:'Fredoka',Arial,sans-serif;font-weight:600;font-size:24px;white-space:nowrap}
+.why{color:var(--soft);font-size:14px;margin-bottom:4px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:5px 0;cursor:pointer}
+.opt input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--ink);cursor:pointer}
+.d h2,.d .score{color:var(--teal)} .p h2,.p .score{color:var(--orange)} .c h2,.c .score{color:var(--blue)}
+.total{border-top:2px solid var(--ink);padding-top:10px;margin-top:2px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.total .n{font-family:'Fredoka',Arial,sans-serif;font-weight:600;font-size:40px;line-height:1}
+.total .lab{font-weight:700}
+.region{font-size:16px;margin-top:6px}
+.region b{font-size:18px}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px;flex-wrap:wrap}
+.foot button{font:inherit;background:none;border:1px solid var(--ink);color:var(--ink);padding:6px 12px;cursor:pointer}
+.foot .small{color:var(--soft);font-size:14px}
+@media (max-height:860px){html,body{font-size:14px} main{padding:6px 14px 4px} h1{font-size:22px} .sub{display:none} .tabs{margin-bottom:6px} .tabs button{padding:4px 2px} label.name{margin-bottom:6px} label.name input{padding:4px 8px} .qhead h2{font-size:17px} .qhead .score{font-size:20px} .why{font-size:12.5px;margin-bottom:2px} .opt{padding:2px 0} .opt input{width:18px;height:18px} section.q{padding:5px 0} .total{padding-top:6px} .total .n{font-size:28px} .region{font-size:14px;margin-top:3px} .foot{margin-top:4px} .foot button{padding:3px 10px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Trend Score Calculator</h1>
+  <p class="sub">Check what you found. Your scores fill in by themselves.</p>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <label class="name">Product name
+    <input id="name" type="text" placeholder="Pet name Christmas ornament" autocomplete="off">
+  </label>
+
+  <section class="q d">
+    <div class="qhead"><h2>Demand</h2><span class="score" id="sd">1</span></div>
+    <p class="why">Do people want it? Check every proof you found.</p>
+    <label class="opt"><input type="checkbox" data-k="d1"> “Bestseller” badge</label>
+    <label class="opt"><input type="checkbox" data-k="d2"> “In 20+ carts” or more</label>
+    <label class="opt"><input type="checkbox" data-k="d3"> 100+ reviews</label>
+    <label class="opt"><input type="checkbox" data-k="d4"> A few reviews, or only one listing selling</label>
+  </section>
+
+  <section class="q p">
+    <div class="qhead"><h2>Production</h2><span class="score" id="sp">1</span></div>
+    <p class="why">Can Printify make it? Search the Printify catalog.</p>
+    <label class="opt"><input type="checkbox" data-k="p1"> Printify has the exact blank product</label>
+    <label class="opt"><input type="checkbox" data-k="p2"> Printify has something close</label>
+    <label class="opt"><input type="checkbox" data-k="p3"> The design is tricky to print</label>
+  </section>
+
+  <section class="q c">
+    <div class="qhead"><h2>Competition</h2><span class="score" id="sc">2</span></div>
+    <p class="why">Search it on Etsy and scroll page 1. Less competition = higher score.</p>
+    <label class="opt"><input type="checkbox" data-k="c1"> Fewer than 5 look-alikes on page 1</label>
+    <label class="opt"><input type="checkbox" data-k="c2"> Page 1 is almost all the same item</label>
+  </section>
+
+  <div class="total">
+    <span class="lab">Total, 3 to 9</span>
+    <span class="n" id="tot">4</span>
+  </div>
+  <p class="region" id="region"></p>
+
+  <div class="foot">
+    <span class="small">Copy these scores onto your slide.</span>
+    <button type="button" id="clear">Clear this product</button>
+  </div>
+</main>
+
+<script>
+(function(){
+  var N = 4, KEY = 'trendScore.v1';
+  var state = load();
+  var cur = state.cur || 0;
+  var tabs = document.getElementById('tabs');
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('input[type=checkbox]'));
+  var nameEl = document.getElementById('name');
+
+  function blank(){ return {name:'', k:{}}; }
+  function load(){
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
+    if (!s || !s.items || s.items.length !== N){ s = {cur:0, items:[]}; for (var i=0;i<N;i++) s.items.push(blank()); }
+    return s;
+  }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+  function scores(k){
+    var d = (k.d1||k.d2||k.d3) ? 3 : (k.d4 ? 2 : 1);
+    var p = (k.p1 && !k.p3) ? 3 : ((k.p1||k.p2) ? 2 : 1);
+    var c = k.c1 ? 3 : (k.c2 ? 1 : 2);
+    return {d:d, p:p, c:c, t:d+p+c};
+  }
+  function region(s){
+    var D = s.d>=2, P = s.p>=2, C = s.c>=2;
+    if (D&&P&&C) return ['Sweet spot', 'Inside all three circles. This is the goal.'];
+    if (D&&P) return ['Crowded', 'People want it and Printify can make it, but lots of sellers have it. Add a twist.'];
+    if (D&&C) return ['Can’t print', 'People want it, but Printify can’t make it well.'];
+    if (P&&C) return ['No buyers', 'Easy to make, but there’s no proof people want it.'];
+    return ['Outside the middle', 'Fewer than two circles. Look for a stronger product.'];
+  }
+
+  function renderTabs(){
+    tabs.innerHTML = '';
+    for (var i=0;i<N;i++){
+      var b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('role','tab');
+      b.setAttribute('aria-selected', i===cur ? 'true' : 'false');
+      var t = scores(state.items[i].k).t;
+      b.innerHTML = 'Product ' + (i+1) + '<span class="tt">Total ' + t + '</span>';
+      b.dataset.i = i;
+      b.onclick = function(){ cur = +this.dataset.i; state.cur = cur; save(); render(); };
+      tabs.appendChild(b);
+    }
+  }
+  function render(){
+    var it = state.items[cur];
+    nameEl.value = it.name;
+    boxes.forEach(function(x){ x.checked = !!it.k[x.dataset.k]; });
+    var s = scores(it.k);
+    document.getElementById('sd').textContent = s.d;
+    document.getElementById('sp').textContent = s.p;
+    document.getElementById('sc').textContent = s.c;
+    document.getElementById('tot').textContent = s.t;
+    var r = region(s);
+    document.getElementById('region').innerHTML = 'Venn: <b>' + r[0] + '</b>. ' + r[1];
+    renderTabs();
+  }
+
+  boxes.forEach(function(x){
+    x.addEventListener('change', function(){
+      var k = state.items[cur].k;
+      k[x.dataset.k] = x.checked;
+      if (x.checked && x.dataset.k === 'c1') k.c2 = false;
+      if (x.checked && x.dataset.k === 'c2') k.c1 = false;
+      save(); render();
+    });
+  });
+  nameEl.addEventListener('input', function(){ state.items[cur].name = nameEl.value; save(); });
+  document.getElementById('clear').onclick = function(){ state.items[cur] = blank(); save(); render(); };
+
+  render();
+})();
+</script>
+</body>
+</html>
